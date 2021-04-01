@@ -1,7 +1,7 @@
 /**************************************
  * File: Tetris1.java Author: helen maher Walk-through: http://java.macteki.com/
  * 
- * Description: Step 10
+ * Description: Step 14 random token test
  *************************************/
 
 class Tetris2 extends javax.swing.JPanel {
@@ -10,30 +10,30 @@ class Tetris2 extends javax.swing.JPanel {
 
     int[][] occupied = new int[10][20];
 
+    // [two tokens] [ four rotations ] [ four cells ]
+    static int[][][] xRotationArray = { { { 0, 0, 1, 2 }, { 0, 0, 0, 1 }, { 2, 0, 1, 2 }, { 0, 1, 1, 1 } }, // token
+                                                                                                            // number 0
+            { { 0, 0, 1, 1 }, { 1, 2, 0, 1 }, { 0, 0, 1, 1 }, { 1, 2, 0, 1 } }, // token number 1
+            { { 1, 1, 0, 0 }, { 0, 1, 1, 2 }, { 1, 1, 0, 0 }, { 0, 1, 1, 2 } }, // token number 2
+            { { 0, 1, 2, 2 }, { 0, 1, 0, 0 }, { 0, 0, 1, 2 }, { 1, 1, 0, 1 } }, // token number 3
+            { { 1, 0, 1, 2 }, { 1, 0, 1, 1 }, { 0, 1, 1, 2 }, { 0, 0, 1, 0 } }, // token number 4
+            { { 0, 1, 0, 1 }, { 0, 1, 0, 1 }, { 0, 1, 0, 1 }, { 0, 1, 0, 1 } }, // token number 5
+            { { 0, 1, 2, 3 }, { 0, 0, 0, 0 }, { 0, 1, 2, 3 }, { 0, 0, 0, 0 } } // token number 6
+    };
+
+    static int[][][] yRotationArray = { { { 0, 1, 0, 0 }, { 0, 1, 2, 2 }, { 0, 1, 1, 1 }, { 0, 0, 1, 2 } }, // token
+                                                                                                            // number 0
+            { { 0, 1, 1, 2 }, { 0, 0, 1, 1 }, { 0, 1, 1, 2 }, { 0, 0, 1, 1 } }, // token number 1
+            { { 0, 1, 1, 2 }, { 0, 0, 1, 1 }, { 0, 1, 1, 2 }, { 0, 0, 1, 1 } }, // token number 2
+            { { 0, 0, 0, 1 }, { 0, 0, 1, 2 }, { 0, 1, 1, 1 }, { 0, 1, 2, 2 } }, // token number 3
+            { { 0, 1, 1, 1 }, { 0, 1, 1, 2 }, { 0, 0, 1, 0 }, { 0, 1, 1, 2 } }, // token number 4
+            { { 0, 0, 1, 1 }, { 0, 0, 1, 1 }, { 0, 0, 1, 1 }, { 0, 0, 1, 1 } }, // token number 5
+            { { 0, 0, 0, 0 }, { 0, 1, 2, 3 }, { 0, 0, 0, 0 }, { 0, 1, 2, 3 } } // token number 6
+    };
+
     public void init() {
         this.setPreferredSize(new java.awt.Dimension(640, 480));
         this.setBackground(java.awt.Color.GREEN);
-
-        // array of relative position
-        int[] xArray = { 0, 0, 1, 2 };
-        int[] yArray = { 0, 1, 0, 0 };
-
-        drawToken(0, 0, xArray, yArray);
-
-        // first rotation
-        xArray = new int[] { 0, 0, 0, 1 };
-        yArray = new int[] { 0, 1, 2, 2 };
-        drawToken(0, 5, xArray, yArray);
-
-        // second rotation
-        xArray = new int[] { 2, 0, 1, 2 };
-        yArray = new int[] { 0, 1, 1, 1 };
-        drawToken(0, 10, xArray, yArray);
-
-        // third rotation
-        xArray = new int[] { 0, 1, 1, 1 };
-        yArray = new int[] { 0, 0, 1, 2 };
-        drawToken(0, 15, xArray, yArray);
     }
 
     public void drawCell(int x, int y) {
@@ -68,6 +68,24 @@ class Tetris2 extends javax.swing.JPanel {
                 }
     }
 
+    public void randomTokenTest() {
+        try {
+            Thread.sleep(1000);
+        } catch (Exception ignore) {
+        }
+        int x = (int) (7 * Math.random());
+        int y = (int) (15 * Math.random());
+
+        int tokenNumber = (int) (7 * Math.random());
+        int rotationNumber = (int) (4 * Math.random());
+
+        int[] xArray = xRotationArray[tokenNumber][rotationNumber];
+        int[] yArray = yRotationArray[tokenNumber][rotationNumber];
+
+        drawToken(x, y, xArray, yArray);
+        repaint();
+    }
+
     public static void main(String[] args) throws Exception {
         javax.swing.JFrame window = new javax.swing.JFrame("Tetris");
         window.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
@@ -78,6 +96,10 @@ class Tetris2 extends javax.swing.JPanel {
         window.add(tetris);
         window.pack();
         window.setVisible(true);
+
+        // randomly draw 20 tokens, without overlap checking
+        for (int i = 0; i < 20; i++)
+            tetris.randomTokenTest();
     }
 
 }
