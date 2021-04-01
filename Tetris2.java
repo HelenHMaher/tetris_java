@@ -1,10 +1,10 @@
 /**************************************
  * File: Tetris1.java Author: helen maher Walk-through: http://java.macteki.com/
  * 
- * Description: GREEN BACKGROUND
+ * Description: RED CELL
  *************************************/
 
-class Tetris1 extends javax.swing.JPanel {
+class Tetris2 extends javax.swing.JPanel {
     /**
      *
      */
@@ -15,15 +15,24 @@ class Tetris1 extends javax.swing.JPanel {
         this.setBackground(java.awt.Color.GREEN);
     }
 
+    public void paint(java.awt.Graphics gr) {
+        super.paint(gr);
+        gr.setColor(java.awt.Color.BLACK);
+        gr.fillRect(0, 0, 24, 24);
+        gr.setColor(java.awt.Color.RED);
+        gr.fillRect(1, 1, 22, 22);
+    }
+
     public static void main(String[] args) throws Exception {
-        javax.swing.JFrame window = new javax.swing.JFrame("Macteki Tetris");
+        javax.swing.JFrame window = new javax.swing.JFrame("Maher Tetris");
         window.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 
-        Tetris1 tetris = new Tetris1();
+        Tetris2 tetris = new Tetris2();
         tetris.init();
 
         window.add(tetris);
         window.pack();
         window.setVisible(true);
     }
+
 }
