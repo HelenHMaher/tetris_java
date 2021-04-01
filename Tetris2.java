@@ -1,7 +1,7 @@
 /**************************************
  * File: Tetris1.java Author: helen maher Walk-through: http://java.macteki.com/
  * 
- * Description: Step 14 random token test
+ * Description: Step 17 game over check
  *************************************/
 
 class Tetris2 extends javax.swing.JPanel {
@@ -50,6 +50,12 @@ class Tetris2 extends javax.swing.JPanel {
         }
     }
 
+    public void eraseToken(int x, int y, int[] xArray, int[] yArray) {
+        for (int i = 0; i < 4; i++) {
+            eraseCell(x + xArray[i], y + yArray[i]);
+        }
+    }
+
     public void paint(java.awt.Graphics gr) {
         super.paint(gr);
 
@@ -66,6 +72,32 @@ class Tetris2 extends javax.swing.JPanel {
                     gr.setColor(java.awt.Color.BLACK);
                     gr.fillRect(x * 24, y * 24, 24, 24);
                 }
+    }
+
+    public boolean isValidPosition(int x, int y, int tokenNumber, int rotationNumber) {
+        int[] xArray = xRotationArray[tokenNumber][rotationNumber];
+        int[] yArray = yRotationArray[tokenNumber][rotationNumber];
+
+        for (int i = 0; i < 4; i++) // loop over the four cells
+        {
+            int xCell = x + xArray[i];
+            int yCell = y + yArray[i];
+
+            // range check
+            if (xCell < 0)
+                return false;
+            if (xCell >= 10)
+                return false;
+            if (yCell < 0)
+                return false;
+            if (yCell >= 20)
+                return false;
+
+            // occupancy check
+            if (occupied[xCell][yCell] == 1)
+                return false;
+        }
+        return true;
     }
 
     public void randomTokenTest() {
@@ -86,6 +118,46 @@ class Tetris2 extends javax.swing.JPanel {
         repaint();
     }
 
+    boolean gameOver = false;
+
+    public void addFallingToken() {
+        int x = 5, y = 0;
+        int tokenNumber, rotationNumber;
+
+        while (true) // loop until prosition is valid
+        {
+            tokenNumber = (int) (7 * Math.random());
+            rotationNumber = (int) (4 * Math.random());
+
+            if (isValidPosition(x, y, tokenNumber, rotationNumber))
+                break;
+        }
+
+        int[] xArray = xRotationArray[tokenNumber][rotationNumber];
+        int[] yArray = yRotationArray[tokenNumber][rotationNumber];
+
+        drawToken(x, y, xArray, yArray);
+        repaint();
+
+        int delay = 500; // mini second
+        boolean reachFloor = false;
+        while (!reachFloor) {
+            try {
+                Thread.sleep(delay);
+            } catch (Exception ignore) {
+            }
+            eraseToken(x, y, xArray, yArray);
+            y += 1; // falling
+            if (!isValidPosition(x, y, tokenNumber, rotationNumber)) // reach floor
+            {
+                reachFloor = true;
+                y -= 1; // restore position
+            }
+            drawToken(x, y, xArray, yArray);
+            repaint();
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         javax.swing.JFrame window = new javax.swing.JFrame("Tetris");
         window.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
@@ -97,9 +169,11 @@ class Tetris2 extends javax.swing.JPanel {
         window.pack();
         window.setVisible(true);
 
-        // randomly draw 20 tokens, without overlap checking
-        for (int i = 0; i < 20; i++)
-            tetris.randomTokenTest();
+        try {
+            Thread.sleep(1000);
+        } catch (Exception ignore) {
+        }
+        tetris.addFallingToken();
     }
 
 }
