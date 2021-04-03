@@ -1,5 +1,6 @@
 /**************************************
- * File: Tetris1.java Author: helen maher Walk-through: http://java.macteki.com/
+ * File: Tetris2.java Author: helen maher
+ * http://java.macteki.com/2011/06/tetris-from-scratch.html
  * 
  * Description: Step 17 game over check
  *************************************/
@@ -59,8 +60,8 @@ class Tetris2 extends javax.swing.JPanel {
     public void paint(java.awt.Graphics gr) {
         super.paint(gr);
 
-        for (int x = 0; x < 10; x++)
-            for (int y = 0; y < 20; y++)
+        for (int x = 0; x < occupied.length; x++)
+            for (int y = 0; y < occupied[0].length; y++)
                 if (occupied[x][y] == 1) {
                     // draw cell
                     gr.setColor(java.awt.Color.BLACK);
@@ -105,11 +106,21 @@ class Tetris2 extends javax.swing.JPanel {
             Thread.sleep(1000);
         } catch (Exception ignore) {
         }
-        int x = (int) (7 * Math.random());
-        int y = (int) (15 * Math.random());
 
-        int tokenNumber = (int) (7 * Math.random());
-        int rotationNumber = (int) (4 * Math.random());
+        int x, y, tokenNumber, rotationNumber;
+
+        while (true) {
+
+            x = (int) (10 * Math.random());
+            y = (int) (20 * Math.random());
+
+            tokenNumber = (int) (7 * Math.random());
+            rotationNumber = (int) (4 * Math.random());
+
+            if (isValidPosition(x, y, tokenNumber, rotationNumber))
+                break;
+
+        }
 
         int[] xArray = xRotationArray[tokenNumber][rotationNumber];
         int[] yArray = yRotationArray[tokenNumber][rotationNumber];
@@ -124,22 +135,23 @@ class Tetris2 extends javax.swing.JPanel {
         int x = 5, y = 0;
         int tokenNumber, rotationNumber;
 
-        while (true) // loop until prosition is valid
-        {
-            tokenNumber = (int) (7 * Math.random());
-            rotationNumber = (int) (4 * Math.random());
-
-            if (isValidPosition(x, y, tokenNumber, rotationNumber))
-                break;
-        }
+        tokenNumber = (int) (7 * Math.random());
+        rotationNumber = (int) (4 * Math.random());
 
         int[] xArray = xRotationArray[tokenNumber][rotationNumber];
         int[] yArray = yRotationArray[tokenNumber][rotationNumber];
 
+        if (!isValidPosition(x, y, tokenNumber, rotationNumber)) {
+            gameOver = true;
+            drawToken(x, y, xArray, yArray);
+            repaint();
+            return;
+        }
+
         drawToken(x, y, xArray, yArray);
         repaint();
 
-        int delay = 500; // mini second
+        int delay = 100; // mini second
         boolean reachFloor = false;
         while (!reachFloor) {
             try {
@@ -158,8 +170,15 @@ class Tetris2 extends javax.swing.JPanel {
         }
     }
 
+    public void printGameOver() {
+        javax.swing.JLabel gameOverLabel = new javax.swing.JLabel("GAME OVER");
+        gameOverLabel.setBounds(300, 300, 100, 30);
+        add(gameOverLabel);
+        repaint();
+    }
+
     public static void main(String[] args) throws Exception {
-        javax.swing.JFrame window = new javax.swing.JFrame("Tetris");
+        javax.swing.JFrame window = new javax.swing.JFrame("Tetris Clone");
         window.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 
         Tetris2 tetris = new Tetris2();
@@ -173,7 +192,12 @@ class Tetris2 extends javax.swing.JPanel {
             Thread.sleep(1000);
         } catch (Exception ignore) {
         }
-        tetris.addFallingToken();
+
+        tetris.gameOver = false;
+        while (!tetris.gameOver)
+            tetris.addFallingToken();
+
+        tetris.printGameOver();
     }
 
 }
