@@ -2,7 +2,7 @@
  * File: Tetris2.java Author: helen maher
  * http://java.macteki.com/2011/06/tetris-from-scratch.html
  * 
- * Description: Step 17 game over check
+ * Description: Step 18
  *************************************/
 
 class Tetris2 extends javax.swing.JPanel {
