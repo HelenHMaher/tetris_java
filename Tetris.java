@@ -1,3 +1,4 @@
+
 /**************************************
  * File: Tetris2.java Author: helen maher
  * http://java.macteki.com/2011/06/tetris-from-scratch.html
@@ -5,12 +6,14 @@
  * Description: additions to the walk-through
  *************************************/
 
+import java.util.ArrayList;
+
 class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
 
     private static final long serialVersionUID = 1L;
 
     int[][] occupied = new int[10][20];
-    int color;
+    ArrayList<Integer> color = new ArrayList<Integer>();
 
     // [two tokens] [ four rotations ] [ four cells ]
     static int[][][] xRotationArray = { { { 0, 0, 1, 2 }, { 0, 0, 0, 1 }, { 2, 0, 1, 2 }, { 0, 1, 1, 1 } }, // token
@@ -75,8 +78,6 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
 
     public void paint(java.awt.Graphics gr) {
         super.paint(gr);
-        // String[] colors = {"RED", "YELLOW", "BLUE", "GREEN", "PINK", "ORANGE"};
-        // int color = (int) (Math.random() * 5);
 
         for (int x = 0; x < occupied.length; x++)
             for (int y = 0; y < occupied[0].length; y++)
@@ -84,12 +85,21 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
                     // draw cell
                     gr.setColor(java.awt.Color.BLACK);
                     gr.fillRect(x * 24, y * 24, 24, 24);
-                    switch (color) {
+                    switch (color.get(0)) {
                     case 0:
                         gr.setColor(java.awt.Color.RED);
                         break;
                     case 1:
                         gr.setColor(java.awt.Color.YELLOW);
+                        break;
+                    case 2:
+                        gr.setColor(java.awt.Color.GREEN);
+                        break;
+                    case 3:
+                        gr.setColor(java.awt.Color.PINK);
+                        break;
+                    case 4:
+                        gr.setColor(java.awt.Color.ORANGE);
                         break;
                     default:
                         gr.setColor(java.awt.Color.BLUE);
@@ -233,7 +243,7 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
     public void addFallingToken() {
         int x = 5, y = 0;
         int tokenNumber, rotationNumber;
-        color = (int) (Math.random() * 5);
+        color.add((int) (Math.random() * 5));
 
         tokenNumber = (int) (7 * Math.random());
         rotationNumber = (int) (4 * Math.random());
@@ -275,7 +285,7 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
                 spacePressed = false;
             }
 
-            int f = 30 - (level * 5); // fall for every 30 frames, this value is decreased when level up
+            int f = 30 - level; // fall for every 30 frames, this value is decreased when level up
             if (frame % f == 0)
                 y += 1;
 
