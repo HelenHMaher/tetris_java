@@ -13,7 +13,7 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
     private static final long serialVersionUID = 1L;
 
     int[][] occupied = new int[10][20];
-    ArrayList<Integer> color = new ArrayList<Integer>();
+    int[][] colorCode = new int[10][20];
 
     // [two tokens] [ four rotations ] [ four cells ]
     static int[][][] xRotationArray = { { { 0, 0, 1, 2 }, { 0, 0, 0, 1 }, { 2, 0, 1, 2 }, { 0, 1, 1, 1 } }, // token
@@ -44,8 +44,8 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
     javax.swing.JLabel levelLabel = new javax.swing.JLabel("LEVEL : 0");
 
     public void init() {
-        this.setPreferredSize(new java.awt.Dimension(640, 480));
-        this.setBackground(java.awt.Color.GREEN);
+        this.setPreferredSize(new java.awt.Dimension(440, 480));
+        this.setBackground(java.awt.Color.WHITE);
 
         this.setLayout(null); // absolute coordinate system
 
@@ -56,17 +56,18 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
         this.add(levelLabel);
     }
 
-    public void drawCell(int x, int y) {
+    public void drawCell(int x, int y, int color) {
         occupied[x][y] = 1;
+        colorCode[x][y] = color;
     }
 
     public void eraseCell(int x, int y) {
         occupied[x][y] = 0;
     }
 
-    public void drawToken(int x, int y, int[] xArray, int[] yArray) {
+    public void drawToken(int x, int y, int[] xArray, int[] yArray, int color) {
         for (int i = 0; i < 4; i++) {
-            drawCell(x + xArray[i], y + yArray[i]);
+            drawCell(x + xArray[i], y + yArray[i], color);
         }
     }
 
@@ -85,7 +86,7 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
                     // draw cell
                     gr.setColor(java.awt.Color.BLACK);
                     gr.fillRect(x * 24, y * 24, 24, 24);
-                    switch (color.get(0)) {
+                    switch (colorCode[x][y]) {
                     case 0:
                         gr.setColor(java.awt.Color.RED);
                         break;
@@ -100,6 +101,9 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
                         break;
                     case 4:
                         gr.setColor(java.awt.Color.ORANGE);
+                        break;
+                    case 5:
+                        gr.setColor(java.awt.Color.BLUE);
                         break;
                     default:
                         gr.setColor(java.awt.Color.BLUE);
@@ -144,7 +148,7 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
         } catch (Exception ignore) {
         }
 
-        int x, y, tokenNumber, rotationNumber;
+        int x, y, tokenNumber, rotationNumber, color;
 
         while (true) { // loop until position is valid
 
@@ -153,6 +157,7 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
 
             tokenNumber = (int) (7 * Math.random());
             rotationNumber = (int) (4 * Math.random());
+            color = (int) (6 * Math.random());
 
             if (isValidPosition(x, y, tokenNumber, rotationNumber))
                 break;
@@ -162,7 +167,7 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
         int[] xArray = xRotationArray[tokenNumber][rotationNumber];
         int[] yArray = yRotationArray[tokenNumber][rotationNumber];
 
-        drawToken(x, y, xArray, yArray);
+        drawToken(x, y, xArray, yArray, color);
         repaint();
     }
 
@@ -242,23 +247,23 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
 
     public void addFallingToken() {
         int x = 5, y = 0;
-        int tokenNumber, rotationNumber;
-        color.add((int) (Math.random() * 5));
+        int tokenNumber, rotationNumber, color;
 
         tokenNumber = (int) (7 * Math.random());
         rotationNumber = (int) (4 * Math.random());
+        color = (int) (6 * Math.random());
 
         int[] xArray = xRotationArray[tokenNumber][rotationNumber];
         int[] yArray = yRotationArray[tokenNumber][rotationNumber];
 
         if (!isValidPosition(x, y, tokenNumber, rotationNumber)) {
             gameOver = true;
-            drawToken(x, y, xArray, yArray);
+            drawToken(x, y, xArray, yArray, color);
             repaint();
             return;
         }
 
-        drawToken(x, y, xArray, yArray);
+        drawToken(x, y, xArray, yArray, color);
         repaint();
 
         int delay = 50; // mini second
@@ -294,7 +299,7 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
                 reachFloor = true;
                 y -= 1; // restore position
             }
-            drawToken(x, y, xArray, yArray);
+            drawToken(x, y, xArray, yArray, color);
             repaint();
             frame++;
         }
