@@ -10,6 +10,7 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
     private static final long serialVersionUID = 1L;
 
     int[][] occupied = new int[10][20];
+    int color;
 
     // [two tokens] [ four rotations ] [ four cells ]
     static int[][][] xRotationArray = { { { 0, 0, 1, 2 }, { 0, 0, 0, 1 }, { 2, 0, 1, 2 }, { 0, 1, 1, 1 } }, // token
@@ -75,7 +76,7 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
     public void paint(java.awt.Graphics gr) {
         super.paint(gr);
         // String[] colors = {"RED", "YELLOW", "BLUE", "GREEN", "PINK", "ORANGE"};
-        int color = (int) (Math.random() * 5);
+        // int color = (int) (Math.random() * 5);
 
         for (int x = 0; x < occupied.length; x++)
             for (int y = 0; y < occupied[0].length; y++)
@@ -232,6 +233,7 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
     public void addFallingToken() {
         int x = 5, y = 0;
         int tokenNumber, rotationNumber;
+        color = (int) (Math.random() * 5);
 
         tokenNumber = (int) (7 * Math.random());
         rotationNumber = (int) (4 * Math.random());
