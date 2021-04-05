@@ -1,12 +1,10 @@
 
 /**************************************
- * File: Tetris2.java Author: helen maher
+ * File: Tetris.java Author: helen maher
  * http://java.macteki.com/2011/06/tetris-from-scratch.html
  * 
  * Description: additions to the walk-through
  *************************************/
-
-import java.util.ArrayList;
 
 class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
 
