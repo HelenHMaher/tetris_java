@@ -312,7 +312,7 @@ public class TetrisReplica extends javax.swing.JPanel implements java.awt.event.
     }
 
     public void keyTyped(java.awt.event.KeyEvent event) {
-    };
+    }
 
     public static void main(String[] args) throws Exception {
         javax.swing.JFrame window = new javax.swing.JFrame("My Tetris");
