@@ -9,8 +9,12 @@ public class TetrisReplica extends javax.swing.JPanel implements java.awt.event.
 
     private static final long serialVersionUID = 1L;
 
+    int[][] occupied = new int[15][30];
+    int[][] color = new int[15][30];
+
+    // [two tokens] [ four rotations ] [ four cells ]
     static int[][][] xRotationArray = { { { 0, 0, 1, 2 }, { 0, 0, 0, 1 }, { 2, 0, 1, 2 }, { 0, 1, 1, 1 } }, // token
-            // number 0
+                                                                                                            // number 0
             { { 0, 0, 1, 1 }, { 1, 2, 0, 1 }, { 0, 0, 1, 1 }, { 1, 2, 0, 1 } }, // token number 1
             { { 1, 1, 0, 0 }, { 0, 1, 1, 2 }, { 1, 1, 0, 0 }, { 0, 1, 1, 2 } }, // token number 2
             { { 0, 1, 2, 2 }, { 0, 1, 0, 0 }, { 0, 0, 1, 2 }, { 1, 1, 0, 1 } }, // token number 3
@@ -20,7 +24,7 @@ public class TetrisReplica extends javax.swing.JPanel implements java.awt.event.
     };
 
     static int[][][] yRotationArray = { { { 0, 1, 0, 0 }, { 0, 1, 2, 2 }, { 0, 1, 1, 1 }, { 0, 0, 1, 2 } }, // token
-            // number 0
+                                                                                                            // number 0
             { { 0, 1, 1, 2 }, { 0, 0, 1, 1 }, { 0, 1, 1, 2 }, { 0, 0, 1, 1 } }, // token number 1
             { { 0, 1, 1, 2 }, { 0, 0, 1, 1 }, { 0, 1, 1, 2 }, { 0, 0, 1, 1 } }, // token number 2
             { { 0, 0, 0, 1 }, { 0, 0, 1, 2 }, { 0, 1, 1, 1 }, { 0, 1, 2, 2 } }, // token number 3
@@ -29,10 +33,6 @@ public class TetrisReplica extends javax.swing.JPanel implements java.awt.event.
             { { 0, 0, 0, 0 }, { 0, 1, 2, 3 }, { 0, 0, 0, 0 }, { 0, 1, 2, 3 } } // token number 6
     };
 
-    int[][] occupied = new int[15][30];
-    int[][] color = new int[15][30];
-
-    boolean gameOver = false;
     int score = 0;
     int lineCompleted = 0;
     int level = 0;
@@ -41,15 +41,15 @@ public class TetrisReplica extends javax.swing.JPanel implements java.awt.event.
     javax.swing.JLabel levelLabel = new javax.swing.JLabel("LEVEL : 0");
 
     public void addBackground() {
-        this.setPreferredSize(new java.awt.Dimension(24 * 15, 24 * 33));
+        this.setPreferredSize(new java.awt.Dimension(15 * 24, 33 * 24));
         this.setBackground(java.awt.Color.GRAY);
 
         this.setLayout(null); // absolute coordiante system
 
-        scoreLabel.setBounds(24, 24 * 30, 100, 30);
+        scoreLabel.setBounds(24, 30 * 24, 100, 30);
         this.add(scoreLabel);
 
-        levelLabel.setBounds(24, 24 * 31, 100, 30);
+        levelLabel.setBounds(24, 31 * 24, 100, 30);
         this.add(levelLabel);
 
     }
@@ -155,6 +155,73 @@ public class TetrisReplica extends javax.swing.JPanel implements java.awt.event.
         levelLabel.setText("LEVEL : " + level);
     }
 
+    boolean gameOver = false;
+
+    public void addFallingToken() {
+        int x = (int) (12 * Math.random()), y = 0;
+        int tokenNumber, rotationNumber, tokenColor;
+
+        tokenNumber = (int) (7 * Math.random());
+        rotationNumber = (int) (4 * Math.random());
+        tokenColor = (int) (4 * Math.random());
+
+        int[] xArray = xRotationArray[tokenNumber][rotationNumber];
+        int[] yArray = yRotationArray[tokenNumber][rotationNumber];
+
+        if (!isValidPosition(x, y, tokenNumber, rotationNumber)) {
+            gameOver = true;
+            drawToken(x, y, xArray, yArray, tokenColor);
+            repaint();
+            return;
+        }
+
+        drawToken(x, y, xArray, yArray, tokenColor);
+        repaint();
+
+        int delay = 50;
+        int frame = 0;
+        boolean reachFloor = false;
+        while (!reachFloor) {
+            try {
+                Thread.sleep(delay);
+            } catch (Exception ignore) {
+            }
+
+            eraseToken(x, y, xArray, yArray);
+
+            // keyboard control
+            if (leftPressed && isValidPosition(x - 1, y, tokenNumber, rotationNumber)) {
+                x -= 1;
+            }
+            if (rightPressed && isValidPosition(x + 1, y, tokenNumber, rotationNumber)) {
+                x += 1;
+            }
+            if (downPressed && isValidPosition(x, y + 1, tokenNumber, rotationNumber)) {
+                y += 1;
+            }
+            if (spacePressed && isValidPosition(x, y, tokenNumber, (rotationNumber + 1) % 4)) {
+                rotationNumber = (rotationNumber + 1) % 4;
+                xArray = xRotationArray[tokenNumber][rotationNumber];
+                yArray = yRotationArray[tokenNumber][rotationNumber];
+                spacePressed = false;
+            }
+
+            int f = 30 - level;
+            if (frame % f == 0) {
+                y += 1;
+            }
+
+            if (!isValidPosition(x, y, tokenNumber, rotationNumber)) {
+                reachFloor = true;
+                y -= 1;
+            }
+
+            drawToken(x, y, xArray, yArray, tokenColor);
+            repaint();
+            frame++;
+        }
+    }
+
     public void printGameOver() {
         javax.swing.JLabel gameOverLabel = new javax.swing.JLabel("GAME OVER");
         gameOverLabel.setBounds(150, 24 * 30, 100, 30);
@@ -200,72 +267,7 @@ public class TetrisReplica extends javax.swing.JPanel implements java.awt.event.
     public void keyTyped(java.awt.event.KeyEvent event) {
     };
 
-    public void addFallingToken() {
-        int x = (int) (11 * Math.random() + 2), y = 0;
-        int tokenNumber, rotationNumber, tokenColor;
-
-        tokenNumber = (int) (7 * Math.random());
-        rotationNumber = (int) (4 * Math.random());
-        tokenColor = (int) (4 * Math.random());
-
-        int[] xArray = xRotationArray[tokenNumber][rotationNumber];
-        int[] yArray = yRotationArray[tokenNumber][rotationNumber];
-
-        if (!isValidPosition(x, y, tokenNumber, rotationNumber)) {
-            gameOver = true;
-            drawToken(x, y, xArray, yArray, tokenColor);
-            repaint();
-            return;
-        }
-
-        drawToken(x, y, xArray, yArray, tokenColor);
-        repaint();
-
-        int delay = 50;
-        int frame = 0;
-        boolean reachFloor = false;
-        while (!reachFloor) {
-            try {
-                Thread.sleep(delay);
-            } catch (Exception ignore) {
-            }
-
-            eraseToken(x, y, xArray, yArray);
-
-            // keyboard control
-            if (leftPressed && isValidPosition(x - 1, y, tokenNumber, rotationNumber)) {
-                x -= 1;
-            }
-            if (rightPressed && isValidPosition(x + 1, y, tokenNumber, rotationNumber)) {
-                x += 1;
-            }
-            if (downPressed && isValidPosition(x, y + 1, tokenNumber, rotationNumber)) {
-                y += 1;
-            }
-            if (spacePressed && isValidPosition(x, y, tokenNumber, (rotationNumber + 1) % 4)) {
-                rotationNumber = (rotationNumber + 1) % 4;
-                xArray = xRotationArray[tokenNumber][rotationNumber];
-                yArray = yRotationArray[tokenColor][rotationNumber];
-                spacePressed = false;
-            }
-
-            int f = 30 - level;
-            if (frame % f == 0) {
-                y += 1;
-            }
-
-            if (!isValidPosition(x, y, tokenNumber, rotationNumber)) {
-                reachFloor = true;
-                y -= 1;
-            }
-
-            drawToken(x, y, xArray, yArray, tokenColor);
-            repaint();
-            frame++;
-        }
-    }
-
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         javax.swing.JFrame window = new javax.swing.JFrame("My Tetris");
         window.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 
@@ -275,6 +277,11 @@ public class TetrisReplica extends javax.swing.JPanel implements java.awt.event.
         window.add(tetris);
         window.pack();
         window.setVisible(true);
+
+        try {
+            Thread.sleep(1000);
+        } catch (Exception ignore) {
+        }
 
         window.addKeyListener(tetris);
 

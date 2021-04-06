@@ -140,34 +140,34 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
         return true;
     }
 
-    public void randomTokenTest() {
-        try {
-            Thread.sleep(1000);
-        } catch (Exception ignore) {
-        }
+    // public void randomTokenTest() {
+    // try {
+    // Thread.sleep(1000);
+    // } catch (Exception ignore) {
+    // }
 
-        int x, y, tokenNumber, rotationNumber, color;
+    // int x, y, tokenNumber, rotationNumber, color;
 
-        while (true) { // loop until position is valid
+    // while (true) { // loop until position is valid
 
-            x = (int) (10 * Math.random());
-            y = (int) (20 * Math.random());
+    // x = (int) (10 * Math.random());
+    // y = (int) (20 * Math.random());
 
-            tokenNumber = (int) (7 * Math.random());
-            rotationNumber = (int) (4 * Math.random());
-            color = (int) (6 * Math.random());
+    // tokenNumber = (int) (7 * Math.random());
+    // rotationNumber = (int) (4 * Math.random());
+    // color = (int) (6 * Math.random());
 
-            if (isValidPosition(x, y, tokenNumber, rotationNumber))
-                break;
+    // if (isValidPosition(x, y, tokenNumber, rotationNumber))
+    // break;
 
-        }
+    // }
 
-        int[] xArray = xRotationArray[tokenNumber][rotationNumber];
-        int[] yArray = yRotationArray[tokenNumber][rotationNumber];
+    // int[] xArray = xRotationArray[tokenNumber][rotationNumber];
+    // int[] yArray = yRotationArray[tokenNumber][rotationNumber];
 
-        drawToken(x, y, xArray, yArray, color);
-        repaint();
-    }
+    // drawToken(x, y, xArray, yArray, color);
+    // repaint();
+    // }
 
     public void clearCompleteRow(int[] completed) {
         // must loop for odd number of times
