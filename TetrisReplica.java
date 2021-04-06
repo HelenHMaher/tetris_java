@@ -137,6 +137,53 @@ public class TetrisReplica extends javax.swing.JPanel implements java.awt.event.
         return true;
     }
 
+    public void clearCompleteRow(int[] complete) {
+        for (int blinking = 0; blinking < 5; blinking++) {
+            for (int i = 0; i < complete.length; i++) {
+                if (complete[i] == 1) {
+                    for (int x = 0; x < 15; x++) {
+                        occupied[x][i] = 1 - occupied[x][i];
+                    }
+                }
+            }
+            repaint();
+            try {
+                Thread.sleep(100);
+            } catch (Exception ignore) {
+            }
+        }
+    }
+
+    public void shiftDown(int[] complete) {
+        for (int row = 0; row < complete.length; row++) {
+            if (complete[row] == 1) {
+                for (int y = row; y >= 1; y--) {
+                    for (int x = 0; x < 15; x++) {
+                        occupied[x][y] = occupied[x][y - 1];
+                    }
+                }
+            }
+        }
+    }
+
+    public void checkRowCompletion() {
+        int[] complete = new int[30];
+        for (int y = 0; y < 30; y++) {
+            int filledCell = 0;
+            for (int x = 0; x < 15; x++) {
+                if (occupied[x][y] == 1) {
+                    filledCell++;
+                }
+                if (filledCell == 15) {
+                    complete[y] = 1;
+                }
+            }
+        }
+        clearCompleteRow(complete);
+        shiftDown(complete);
+        addScore(complete);
+    }
+
     void addScore(int[] complete) {
         int bonus = 10;
         for (int row = 0; row < complete.length; row++) {
@@ -288,6 +335,7 @@ public class TetrisReplica extends javax.swing.JPanel implements java.awt.event.
         tetris.gameOver = false;
         while (!tetris.gameOver) {
             tetris.addFallingToken();
+            tetris.checkRowCompletion();
         }
         tetris.printGameOver();
     }
