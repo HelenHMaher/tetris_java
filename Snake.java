@@ -21,7 +21,7 @@ public class Snake extends javax.swing.JPanel implements java.awt.event.KeyListe
     int snakeLength = 1;
 
     public void addBackground() {
-        this.setPreferredSize(new java.awt.Dimension(15 * 24, 16 * 24));
+        this.setPreferredSize(new java.awt.Dimension(15 * 24, 17 * 24));
         this.setBackground(java.awt.Color.GRAY);
 
         this.setLayout(null);
@@ -96,7 +96,9 @@ public class Snake extends javax.swing.JPanel implements java.awt.event.KeyListe
 
         newApple();
 
-        drawSnakeCell(snakeXCoords.get(0), snakeYCoords.get(0));
+        for (int i = 0; i < snakeXCoords.size(); i++) {
+            drawSnakeCell(snakeXCoords.get(i), snakeYCoords.get(i));
+        }
 
         repaint();
 
@@ -142,7 +144,14 @@ public class Snake extends javax.swing.JPanel implements java.awt.event.KeyListe
                     // System.out.println("GAME OVER: X = " + snakeXCoords + " Y = " +
                     // snakeYCoords);
                     gameOver = true;
-                    return;
+                    spacebarPressed = false;
+                    printGameOver();
+                    if (spacebarPressed) {
+                        snakeXCoords.clear();
+                        snakeYCoords.clear();
+                        addSnake();
+                        return;
+                    }
                 }
                 // System.out.println("X : " + snakeXCoords);
                 // System.out.println("Y : " + snakeYCoords);
@@ -168,8 +177,11 @@ public class Snake extends javax.swing.JPanel implements java.awt.event.KeyListe
 
     public void printGameOver() {
         javax.swing.JLabel gameOverLabel = new javax.swing.JLabel("GAME OVER");
+        javax.swing.JLabel startOverLabel = new javax.swing.JLabel("press the SPACEBAR to start over");
         gameOverLabel.setBounds(24, 24 * 15, 100, 30);
+        startOverLabel.setBounds(24, 24 * 16, 250, 30);
         add(gameOverLabel);
+        add(startOverLabel);
         repaint();
     }
 
@@ -177,6 +189,7 @@ public class Snake extends javax.swing.JPanel implements java.awt.event.KeyListe
     boolean rightPressed = false;
     boolean downPressed = false;
     boolean upPressed = false;
+    boolean spacebarPressed = false;
 
     public void keyPressed(java.awt.event.KeyEvent event) {
         if (event.getKeyCode() == 37) {
@@ -202,6 +215,9 @@ public class Snake extends javax.swing.JPanel implements java.awt.event.KeyListe
             rightPressed = false;
             downPressed = false;
             upPressed = true;
+        }
+        if (event.getKeyCode() == 32) {
+            spacebarPressed = true;
         }
     }
 
@@ -230,8 +246,6 @@ public class Snake extends javax.swing.JPanel implements java.awt.event.KeyListe
         window.addKeyListener(snake);
 
         snake.addSnake();
-
-        snake.printGameOver();
 
     }
 }
