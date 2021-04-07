@@ -15,6 +15,7 @@ public class Snake extends javax.swing.JPanel implements java.awt.event.KeyListe
 
     ArrayList<Integer> snakeXCoords = new ArrayList<Integer>();
     ArrayList<Integer> snakeYCoords = new ArrayList<Integer>();
+
     int[] appleCoords = new int[2];
     int snakeLength = 1;
 
@@ -94,9 +95,8 @@ public class Snake extends javax.swing.JPanel implements java.awt.event.KeyListe
 
         newApple();
 
-        for (int i = 0; i < snakeLength; i++) {
-            drawSnakeCell(snakeXCoords.get(i), snakeYCoords.get(i));
-        }
+        drawSnakeCell(snakeXCoords.get(0), snakeYCoords.get(0));
+
         repaint();
 
         int delay = 50;
@@ -108,56 +108,50 @@ public class Snake extends javax.swing.JPanel implements java.awt.event.KeyListe
             } catch (Exception ignore) {
             }
 
-            eraseSnakeCell(snakeXCoords.get(0), snakeYCoords.get(0));
-
             if (frame % 5 == 0 && leftPressed) {
 
-                snakeYCoords.get(snakeLength) = snakeYCoords.get(snakeLength - 1);
-                snakeXCoords[snakeLength] = snakeXCoords[snakeLength - 1] - 1;
+                snakeYCoords.add(snakeYCoords.get(snakeYCoords.size() - 1));
+                snakeXCoords.add(snakeXCoords.get(snakeXCoords.size() - 1) - 1);
             }
             if (frame % 5 == 0 && rightPressed) {
 
-                snakeYCoords[snakeLength] = snakeYCoords[snakeLength - 1];
-                snakeXCoords[snakeLength] = snakeXCoords[snakeLength - 1] + 1;
+                snakeYCoords.add(snakeYCoords.get(snakeYCoords.size() - 1));
+                snakeXCoords.add(snakeXCoords.get(snakeXCoords.size() - 1) + 1);
             }
             if (frame % 5 == 0 && upPressed) {
 
-                snakeYCoords[snakeLength] = snakeYCoords[snakeLength - 1] - 1;
-                snakeXCoords[snakeLength] = snakeXCoords[snakeLength - 1];
+                snakeYCoords.add(snakeYCoords.get(snakeYCoords.size() - 1) - 1);
+                snakeXCoords.add(snakeXCoords.get(snakeXCoords.size() - 1));
 
             }
             if (frame % 5 == 0 && downPressed) {
 
-                snakeYCoords[snakeLength] = snakeYCoords[snakeLength - 1] + 1;
-                snakeXCoords[snakeLength] = snakeXCoords[snakeLength - 1];
+                snakeYCoords.add(snakeYCoords.get(snakeYCoords.size() - 1) + 1);
+                snakeXCoords.add(snakeXCoords.get(snakeXCoords.size() - 1));
 
             }
 
             if (frame % 5 == 0 && !downPressed && !upPressed && !rightPressed && !leftPressed) {
-                snakeYCoords[snakeLength] = snakeYCoords[snakeLength - 1];
-                snakeXCoords[snakeLength] = snakeXCoords[snakeLength - 1] + 1;
+                snakeYCoords.add(snakeYCoords.get(snakeYCoords.size() - 1));
+                snakeXCoords.add(snakeXCoords.get(snakeXCoords.size() - 1) + 1);
             }
 
-            if (!isValidPosition(snakeXCoords[snakeLength], snakeYCoords[snakeLength])) {
+            if (!isValidPosition(snakeXCoords.get(snakeXCoords.size() - 1),
+                    snakeYCoords.get(snakeYCoords.size() - 1))) {
                 gameOver = true;
                 return;
             }
 
             // check for apple and if apple, add deleted cell back in and add length
-            if (snakeXCoords[snakeLength] == appleCoords[0] && snakeYCoords[snakeLength] == appleCoords[1]) {
-                snakeLength++;
+            if (snakeXCoords.get(snakeXCoords.size() - 1) == appleCoords[0]
+                    && snakeYCoords.get(snakeYCoords.size() - 1) == appleCoords[1]) {
+                drawSnakeCell(snakeXCoords.get(snakeXCoords.size() - 1), snakeYCoords.get(snakeYCoords.size() - 1));
                 newApple();
             } else {
-                for (int i = 0; i < snakeLength; i++) {
-                    snakeYCoords[i] = snakeYCoords[i + 1];
-                    snakeXCoords[i] = snakeXCoords[i + 1];
-                }
-                snakeYCoords.get(snakeLength) = 0;
-                snakeXCoords.get(snakeLength) = 0;
-            }
-
-            for (int i = 0; i < snakeLength; i++) {
-                drawSnakeCell(snakeXCoords.get(i), snakeYCoords.get(i));
+                drawSnakeCell(snakeXCoords.get(snakeXCoords.size() - 1), snakeYCoords.get(snakeYCoords.size() - 1));
+                eraseSnakeCell(snakeXCoords.get(0), snakeYCoords.get(0));
+                snakeXCoords.remove(0);
+                snakeYCoords.remove(0);
             }
 
             repaint();
