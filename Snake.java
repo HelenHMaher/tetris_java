@@ -3,6 +3,7 @@
  * File: Snake.java Author: helen maher
  * 
  * Description: Snake Game
+ * Improvements: make it possible to click the opposite of travel without killing your snake, make apple not generate first in [0][0]
  *************************************/
 
 import java.util.ArrayList;
