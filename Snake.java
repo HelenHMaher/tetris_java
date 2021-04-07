@@ -18,10 +18,11 @@ public class Snake extends javax.swing.JPanel implements java.awt.event.KeyListe
     ArrayList<Integer> snakeYCoords = new ArrayList<Integer>();
 
     int[] appleCoords = new int[2];
+    boolean initializeApple = false;
     int snakeLength = 1;
 
     public void addBackground() {
-        this.setPreferredSize(new java.awt.Dimension(15 * 24, 17 * 24));
+        this.setPreferredSize(new java.awt.Dimension(15 * 24, 16 * 24));
         this.setBackground(java.awt.Color.GRAY);
 
         this.setLayout(null);
@@ -45,6 +46,7 @@ public class Snake extends javax.swing.JPanel implements java.awt.event.KeyListe
     }
 
     public void newApple() {
+        initializeApple = true;
         int x, y;
         do {
             x = (int) (15 * Math.random());
@@ -66,7 +68,7 @@ public class Snake extends javax.swing.JPanel implements java.awt.event.KeyListe
                     gr.fillRect(x * 24, y * 24, 24, 24);
                     gr.setColor(java.awt.Color.GREEN);
                     gr.fillRect(x * 24 + 1, y * 24 + 1, 22, 22);
-                } else if (appleCoords[0] == x && appleCoords[1] == y) {
+                } else if (appleCoords[0] == x && appleCoords[1] == y && initializeApple) {
                     gr.setColor(java.awt.Color.BLACK);
                     gr.fillRect(x * 24, y * 24, 24, 24);
                     gr.setColor(java.awt.Color.RED);
@@ -90,22 +92,21 @@ public class Snake extends javax.swing.JPanel implements java.awt.event.KeyListe
     boolean gameOver = false;
 
     public void addSnake() {
+
         int x = 7, y = 7;
         snakeXCoords.add(x);
         snakeYCoords.add(y);
 
         newApple();
 
-        for (int i = 0; i < snakeXCoords.size(); i++) {
-            drawSnakeCell(snakeXCoords.get(i), snakeYCoords.get(i));
-        }
+        drawSnakeCell(snakeXCoords.get(0), snakeYCoords.get(0));
 
         repaint();
 
         int delay = 50;
         int frame = 0;
         gameOver = false;
-        while (!gameOver) {
+        GAME: while (!gameOver) {
             try {
                 Thread.sleep(delay);
             } catch (Exception ignore) {
@@ -141,22 +142,38 @@ public class Snake extends javax.swing.JPanel implements java.awt.event.KeyListe
 
                 if (!isValidPosition(snakeXCoords.get(snakeXCoords.size() - 1),
                         snakeYCoords.get(snakeYCoords.size() - 1))) {
+
                     // System.out.println("GAME OVER: X = " + snakeXCoords + " Y = " +
                     // snakeYCoords);
+
                     gameOver = true;
                     spacebarPressed = false;
                     printGameOver();
-                    if (spacebarPressed) {
-                        snakeXCoords.clear();
-                        snakeYCoords.clear();
-                        addSnake();
-                        return;
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Exception ignore) {
                     }
-                }
-                // System.out.println("X : " + snakeXCoords);
-                // System.out.println("Y : " + snakeYCoords);
 
-                // check for apple and if apple, add deleted cell back in and add length
+                    for (int i = 0; i < snakeXCoords.size() - 1; i++) {
+                        eraseSnakeCell(snakeXCoords.get(i), snakeYCoords.get(i));
+                    }
+
+                    snakeXCoords.clear();
+                    snakeYCoords.clear();
+                    snakeXCoords.add(x);
+                    snakeYCoords.add(y);
+
+                    drawSnakeCell(snakeXCoords.get(0), snakeYCoords.get(0));
+
+                    repaint();
+
+                    gameOver = false;
+
+                    continue GAME;
+
+                }
+
+                // check for apple
                 if (snakeXCoords.get(snakeXCoords.size() - 1) == appleCoords[0]
                         && snakeYCoords.get(snakeYCoords.size() - 1) == appleCoords[1]) {
                     drawSnakeCell(snakeXCoords.get(snakeXCoords.size() - 1), snakeYCoords.get(snakeYCoords.size() - 1));
@@ -177,11 +194,14 @@ public class Snake extends javax.swing.JPanel implements java.awt.event.KeyListe
 
     public void printGameOver() {
         javax.swing.JLabel gameOverLabel = new javax.swing.JLabel("GAME OVER");
-        javax.swing.JLabel startOverLabel = new javax.swing.JLabel("press the SPACEBAR to start over");
         gameOverLabel.setBounds(24, 24 * 15, 100, 30);
-        startOverLabel.setBounds(24, 24 * 16, 250, 30);
         add(gameOverLabel);
-        add(startOverLabel);
+        repaint();
+        try {
+            Thread.sleep(1000);
+        } catch (Exception ignore) {
+        }
+        remove(gameOverLabel);
         repaint();
     }
 
