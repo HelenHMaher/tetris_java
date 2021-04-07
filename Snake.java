@@ -3,7 +3,7 @@
  * File: Snake.java Author: helen maher
  * 
  * Description: Snake Game
- * Improvements: make it possible to click the opposite of travel without killing your snake, make apple not generate first in [0][0], make a 'game over' button appear OR an auto-restart
+ * Improvements: make a 'start' happen on request
  *************************************/
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class Snake extends javax.swing.JPanel implements java.awt.event.KeyListe
 
     int[] appleCoords = new int[2];
     boolean initializeApple = false;
-    int snakeLength = 1;
+    boolean validApple;
 
     public void addBackground() {
         this.setPreferredSize(new java.awt.Dimension(15 * 24, 16 * 24));
@@ -36,23 +36,25 @@ public class Snake extends javax.swing.JPanel implements java.awt.event.KeyListe
         occupiedBySnake[x][y] = 0;
     }
 
-    public boolean checkApplePosition(int x, int y) {
-        for (int i = 0; i < snakeLength; i++) {
-            if (appleCoords[0] == snakeXCoords.get(i) && appleCoords[1] == snakeYCoords.get(i)) {
-                return false;
+    public void checkApplePosition(int x, int y) {
+        for (int i = 0; i < snakeXCoords.size(); i++) {
+            if (x == snakeXCoords.get(i) && y == snakeYCoords.get(i)) {
+                return;
             }
         }
-        return true;
+        validApple = true;
     }
 
     public void newApple() {
         initializeApple = true;
+        validApple = false;
         int x, y;
         do {
             x = (int) (15 * Math.random());
             y = (int) (15 * Math.random());
-
-        } while (!checkApplePosition(x, y));
+            // System.out.println("x : " + x + " y : " + y);
+            checkApplePosition(x, y);
+        } while (!validApple);
         appleCoords[0] = x;
         appleCoords[1] = y;
 
@@ -149,14 +151,12 @@ public class Snake extends javax.swing.JPanel implements java.awt.event.KeyListe
                     gameOver = true;
                     spacebarPressed = false;
                     printGameOver();
-                    try {
-                        Thread.sleep(1000);
-                    } catch (Exception ignore) {
-                    }
 
                     for (int i = 0; i < snakeXCoords.size() - 1; i++) {
                         eraseSnakeCell(snakeXCoords.get(i), snakeYCoords.get(i));
                     }
+
+                    newApple();
 
                     snakeXCoords.clear();
                     snakeYCoords.clear();
@@ -166,8 +166,6 @@ public class Snake extends javax.swing.JPanel implements java.awt.event.KeyListe
                     drawSnakeCell(snakeXCoords.get(0), snakeYCoords.get(0));
 
                     repaint();
-
-                    gameOver = false;
 
                     continue GAME;
 
@@ -193,13 +191,19 @@ public class Snake extends javax.swing.JPanel implements java.awt.event.KeyListe
     }
 
     public void printGameOver() {
-        javax.swing.JLabel gameOverLabel = new javax.swing.JLabel("GAME OVER");
-        gameOverLabel.setBounds(24, 24 * 15, 100, 30);
+        javax.swing.JLabel gameOverLabel = new javax.swing.JLabel("GAME OVER     PRESS the SPACEBAR to RESTART");
+        gameOverLabel.setBounds(10, 24 * 15 - 4, 300, 30);
         add(gameOverLabel);
         repaint();
-        try {
-            Thread.sleep(1000);
-        } catch (Exception ignore) {
+        while (gameOver) {
+            try {
+                Thread.sleep(500);
+            } catch (Exception ignore) {
+            }
+            if (spacebarPressed) {
+                gameOver = false;
+            }
+
         }
         remove(gameOverLabel);
         repaint();
