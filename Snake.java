@@ -107,54 +107,59 @@ public class Snake extends javax.swing.JPanel implements java.awt.event.KeyListe
                 Thread.sleep(delay);
             } catch (Exception ignore) {
             }
+            if (frame % 5 == 0) {
+                if (leftPressed) {
 
-            if (frame % 5 == 0 && leftPressed) {
+                    snakeYCoords.add(snakeYCoords.get(snakeYCoords.size() - 1));
+                    snakeXCoords.add(snakeXCoords.get(snakeXCoords.size() - 1) - 1);
+                }
+                if (rightPressed) {
 
-                snakeYCoords.add(snakeYCoords.get(snakeYCoords.size() - 1));
-                snakeXCoords.add(snakeXCoords.get(snakeXCoords.size() - 1) - 1);
+                    snakeYCoords.add(snakeYCoords.get(snakeYCoords.size() - 1));
+                    snakeXCoords.add(snakeXCoords.get(snakeXCoords.size() - 1) + 1);
+                }
+                if (upPressed) {
+
+                    snakeYCoords.add(snakeYCoords.get(snakeYCoords.size() - 1) - 1);
+                    snakeXCoords.add(snakeXCoords.get(snakeXCoords.size() - 1));
+
+                }
+                if (downPressed) {
+
+                    snakeYCoords.add(snakeYCoords.get(snakeYCoords.size() - 1) + 1);
+                    snakeXCoords.add(snakeXCoords.get(snakeXCoords.size() - 1));
+
+                }
+
+                if (!downPressed && !upPressed && !rightPressed && !leftPressed) {
+                    snakeYCoords.add(snakeYCoords.get(snakeYCoords.size() - 1));
+                    snakeXCoords.add(snakeXCoords.get(snakeXCoords.size() - 1) + 1);
+                }
+
+                if (!isValidPosition(snakeXCoords.get(snakeXCoords.size() - 1),
+                        snakeYCoords.get(snakeYCoords.size() - 1))) {
+                    // System.out.println("GAME OVER: X = " + snakeXCoords + " Y = " +
+                    // snakeYCoords);
+                    gameOver = true;
+                    return;
+                }
+                // System.out.println("X : " + snakeXCoords);
+                // System.out.println("Y : " + snakeYCoords);
+
+                // check for apple and if apple, add deleted cell back in and add length
+                if (snakeXCoords.get(snakeXCoords.size() - 1) == appleCoords[0]
+                        && snakeYCoords.get(snakeYCoords.size() - 1) == appleCoords[1]) {
+                    drawSnakeCell(snakeXCoords.get(snakeXCoords.size() - 1), snakeYCoords.get(snakeYCoords.size() - 1));
+                    newApple();
+                } else {
+                    drawSnakeCell(snakeXCoords.get(snakeXCoords.size() - 1), snakeYCoords.get(snakeYCoords.size() - 1));
+                    eraseSnakeCell(snakeXCoords.get(0), snakeYCoords.get(0));
+                    snakeXCoords.remove(0);
+                    snakeYCoords.remove(0);
+                }
+
+                repaint();
             }
-            if (frame % 5 == 0 && rightPressed) {
-
-                snakeYCoords.add(snakeYCoords.get(snakeYCoords.size() - 1));
-                snakeXCoords.add(snakeXCoords.get(snakeXCoords.size() - 1) + 1);
-            }
-            if (frame % 5 == 0 && upPressed) {
-
-                snakeYCoords.add(snakeYCoords.get(snakeYCoords.size() - 1) - 1);
-                snakeXCoords.add(snakeXCoords.get(snakeXCoords.size() - 1));
-
-            }
-            if (frame % 5 == 0 && downPressed) {
-
-                snakeYCoords.add(snakeYCoords.get(snakeYCoords.size() - 1) + 1);
-                snakeXCoords.add(snakeXCoords.get(snakeXCoords.size() - 1));
-
-            }
-
-            if (frame % 5 == 0 && !downPressed && !upPressed && !rightPressed && !leftPressed) {
-                snakeYCoords.add(snakeYCoords.get(snakeYCoords.size() - 1));
-                snakeXCoords.add(snakeXCoords.get(snakeXCoords.size() - 1) + 1);
-            }
-
-            if (!isValidPosition(snakeXCoords.get(snakeXCoords.size() - 1),
-                    snakeYCoords.get(snakeYCoords.size() - 1))) {
-                gameOver = true;
-                return;
-            }
-
-            // check for apple and if apple, add deleted cell back in and add length
-            if (snakeXCoords.get(snakeXCoords.size() - 1) == appleCoords[0]
-                    && snakeYCoords.get(snakeYCoords.size() - 1) == appleCoords[1]) {
-                drawSnakeCell(snakeXCoords.get(snakeXCoords.size() - 1), snakeYCoords.get(snakeYCoords.size() - 1));
-                newApple();
-            } else {
-                drawSnakeCell(snakeXCoords.get(snakeXCoords.size() - 1), snakeYCoords.get(snakeYCoords.size() - 1));
-                eraseSnakeCell(snakeXCoords.get(0), snakeYCoords.get(0));
-                snakeXCoords.remove(0);
-                snakeYCoords.remove(0);
-            }
-
-            repaint();
             frame++;
         }
 
