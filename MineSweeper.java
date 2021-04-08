@@ -1,5 +1,5 @@
 import javax.swing.*;
-import java.awt.*;
+// import java.awt.*;
 import java.awt.event.*;
 
 public class MineSweeper extends javax.swing.JPanel implements ActionListener {
@@ -8,15 +8,32 @@ public class MineSweeper extends javax.swing.JPanel implements ActionListener {
     int[][] revealed = new int[15][15];
     int[][] bomb = new int[15][15];
 
+    JButton[][] buttons = new JButton[15][15];
+
+    public void addButtons() {
+        for (int x = 0; x < revealed.length; x++) {
+            for (int y = 0; y < revealed[0].length; y++) {
+                buttons[x][y] = new JButton();
+                buttons[x][y].addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        revealed[0][0] = 1;
+                        repaint();
+                    }
+                });
+            }
+        }
+    }
+
     public void addBackground() {
         this.setPreferredSize(new java.awt.Dimension(15 * 24, 16 * 24));
         this.setBackground(java.awt.Color.darkGray);
-
         this.setLayout(null);
     }
 
     public void paint(java.awt.Graphics gr) {
         super.paint(gr);
+        this.addButtons();
         for (int x = 0; x < revealed.length; x++) {
             for (int y = 0; y < revealed[0].length; y++) {
                 if (revealed[x][y] == 1 && bomb[x][y] == 1) {
@@ -32,17 +49,8 @@ public class MineSweeper extends javax.swing.JPanel implements ActionListener {
                     gr.setColor(java.awt.Color.GRAY);
                     gr.fillRect(x * 24 + 1, y * 24 + 1, 22, 22);
                 } else {
-                    JButton button = new JButton();
-                    button.setBounds(x * 24, y * 24, 24, 24);
-                    this.add(button);
-                    button.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            revealed[0][0] = 1;
-                            repaint();
-
-                        }
-                    });
+                    buttons[x][y].setBounds(x * 24, y * 24, 24, 24);
+                    this.add(buttons[x][y]);
                 }
             }
         }
