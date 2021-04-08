@@ -12,6 +12,7 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
 
     int[][] occupied = new int[10][20];
     int[][] colorCode = new int[10][20];
+    boolean validPlayer = true;
 
     // [two tokens] [ four rotations ] [ four cells ]
     static int[][][] xRotationArray = { { { 0, 0, 1, 2 }, { 0, 0, 0, 1 }, { 2, 0, 1, 2 }, { 0, 1, 1, 1 } }, // token
@@ -47,10 +48,10 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
 
         this.setLayout(null); // absolute coordinate system
 
-        scoreLabel.setBounds(300, 50, 100, 30); // x,y,w,h (in pixels)
+        scoreLabel.setBounds(250, 50, 100, 30); // x,y,w,h (in pixels)
         this.add(scoreLabel);
 
-        levelLabel.setBounds(300, 100, 100, 30);
+        levelLabel.setBounds(250, 100, 100, 30);
         this.add(levelLabel);
     }
 
@@ -276,8 +277,31 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
 
     public void printGameOver() {
         javax.swing.JLabel gameOverLabel = new javax.swing.JLabel("GAME OVER");
-        gameOverLabel.setBounds(300, 300, 100, 30);
+        javax.swing.JLabel restartLabel = new javax.swing.JLabel("to RESTART");
+        javax.swing.JLabel spaceLabel = new javax.swing.JLabel("PRESS the SPACEBAR");
+
+        gameOverLabel.setBounds(250, 300, 100, 30);
+        restartLabel.setBounds(250, 360, 200, 30);
+        spaceLabel.setBounds(250, 340, 200, 30);
+
         add(gameOverLabel);
+        add(restartLabel);
+        add(spaceLabel);
+        repaint();
+
+        while (gameOver) {
+            try {
+                Thread.sleep(100);
+            } catch (Exception ignore) {
+            }
+            if (spacePressed) {
+                gameOver = false;
+            }
+        }
+
+        remove(gameOverLabel);
+        remove(restartLabel);
+        remove(spaceLabel);
         repaint();
     }
 
@@ -333,6 +357,29 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
         // System.out.println(event);
     }
 
+    public void playGame() {
+        GAME: while (validPlayer) {
+
+            while (!gameOver) {
+                addFallingToken();
+                checkRowCompletion();
+            }
+
+            printGameOver();
+
+            // clear the matrix
+            for (int i = 0; i < occupied.length; i++) {
+                for (int j = 0; j < occupied[0].length; j++) {
+                    occupied[i][j] = 0;
+                    colorCode[i][j] = 0;
+                }
+            }
+            repaint();
+            continue GAME;
+
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         javax.swing.JFrame window = new javax.swing.JFrame("Tetris Clone");
         window.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
@@ -352,12 +399,8 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
         window.addKeyListener(tetris); // listen to keyboard event
 
         tetris.gameOver = false;
-        while (!tetris.gameOver) {
-            tetris.addFallingToken();
-            tetris.checkRowCompletion();
-        }
 
-        tetris.printGameOver();
+        tetris.playGame();
     }
 
 }
