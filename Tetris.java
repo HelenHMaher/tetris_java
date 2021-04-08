@@ -43,7 +43,7 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
 
     public void init() {
         this.setPreferredSize(new java.awt.Dimension(440, 480));
-        this.setBackground(java.awt.Color.WHITE);
+        this.setBackground(java.awt.Color.GRAY);
 
         this.setLayout(null); // absolute coordinate system
 
@@ -109,7 +109,7 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
                     gr.fillRect(x * 24 + 1, y * 24 + 1, 22, 22);
                 } else {
                     // erase cell
-                    gr.setColor(java.awt.Color.BLACK);
+                    gr.setColor(java.awt.Color.WHITE);
                     gr.fillRect(x * 24, y * 24, 24, 24);
                 }
     }
@@ -139,35 +139,6 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
         }
         return true;
     }
-
-    // public void randomTokenTest() {
-    // try {
-    // Thread.sleep(1000);
-    // } catch (Exception ignore) {
-    // }
-
-    // int x, y, tokenNumber, rotationNumber, color;
-
-    // while (true) { // loop until position is valid
-
-    // x = (int) (10 * Math.random());
-    // y = (int) (20 * Math.random());
-
-    // tokenNumber = (int) (7 * Math.random());
-    // rotationNumber = (int) (4 * Math.random());
-    // color = (int) (6 * Math.random());
-
-    // if (isValidPosition(x, y, tokenNumber, rotationNumber))
-    // break;
-
-    // }
-
-    // int[] xArray = xRotationArray[tokenNumber][rotationNumber];
-    // int[] yArray = yRotationArray[tokenNumber][rotationNumber];
-
-    // drawToken(x, y, xArray, yArray, color);
-    // repaint();
-    // }
 
     public void clearCompleteRow(int[] completed) {
         // must loop for odd number of times
@@ -244,7 +215,7 @@ class Tetris extends javax.swing.JPanel implements java.awt.event.KeyListener {
     boolean gameOver = false;
 
     public void addFallingToken() {
-        int x = 5, y = 0;
+        int x = (int) (Math.random() * 7), y = 0;
         int tokenNumber, rotationNumber, color;
 
         tokenNumber = (int) (7 * Math.random());
