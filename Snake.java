@@ -94,7 +94,6 @@ public class Snake extends javax.swing.JPanel implements java.awt.event.KeyListe
     boolean gameOver = false;
 
     public void addSnake() {
-
         int x = 7, y = 7;
         snakeXCoords.add(x);
         snakeYCoords.add(y);
