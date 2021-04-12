@@ -1,3 +1,4 @@
+import minesweeper.MineSweeperTutorial;
 
 public class Menu extends javax.swing.JPanel implements java.awt.event.KeyListener {
 
@@ -8,6 +9,7 @@ public class Menu extends javax.swing.JPanel implements java.awt.event.KeyListen
     javax.swing.JLabel menuLabel = new javax.swing.JLabel("TYPE the NUMBER to start PLAYING!!");
     javax.swing.JLabel snakeLabel = new javax.swing.JLabel("1.  SNAKE");
     javax.swing.JLabel tetrisLabel = new javax.swing.JLabel("2. TETRIS");
+    javax.swing.JLabel minesweeperLabel = new javax.swing.JLabel("3. MINESWEEPER");
 
     public void addBackground() {
         this.setPreferredSize(new java.awt.Dimension(300, 200));
@@ -17,14 +19,17 @@ public class Menu extends javax.swing.JPanel implements java.awt.event.KeyListen
         menuLabel.setBounds(20, 20, 300, 30);
         snakeLabel.setBounds(25, 80, 100, 30);
         tetrisLabel.setBounds(25, 110, 100, 30);
+        minesweeperLabel.setBounds(25, 140, 130, 30);
 
         this.add(menuLabel);
         this.add(snakeLabel);
         this.add(tetrisLabel);
+        this.add(minesweeperLabel);
     }
 
     boolean onePressed = false;
     boolean twoPressed = false;
+    boolean threePressed = false;
 
     public void keyPressed(java.awt.event.KeyEvent event) {
         if (event.getKeyCode() == 49) {
@@ -32,6 +37,9 @@ public class Menu extends javax.swing.JPanel implements java.awt.event.KeyListen
         }
         if (event.getKeyCode() == 50) {
             twoPressed = true;
+        }
+        if (event.getKeyCode() == 51) {
+            threePressed = true;
         }
     }
 
@@ -41,6 +49,9 @@ public class Menu extends javax.swing.JPanel implements java.awt.event.KeyListen
         }
         if (event.getKeyCode() == 50) {
             twoPressed = false;
+        }
+        if (event.getKeyCode() == 51) {
+            threePressed = false;
         }
     }
 
@@ -71,6 +82,9 @@ public class Menu extends javax.swing.JPanel implements java.awt.event.KeyListen
             }
             if (menu.twoPressed) {
                 Tetris.main(args);
+            }
+            if (menu.threePressed) {
+                MineSweeperTutorial.main(args);
             }
         }
     }
